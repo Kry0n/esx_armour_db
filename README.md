@@ -1,5 +1,5 @@
 # esx_armour_db
-ESX Script that allows you to save the players armour in the database
+ESX Script that allows you to save the players armour on the database
 
 # Requirements
 
