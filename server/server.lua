@@ -11,8 +11,8 @@ end)
 
 AddEventHandler('esx:playerLoaded', function(playerId)
     local xPlayer = ESX.GetPlayerFromId(playerId)
-    exports.ghmattimysql:scalar("SELECT armour FROM users WHERE identifier = @identifier", { 
-        ['identifier'] = tostring(xPlayer.getIdentifier())
+    MySQL.Async.fetchScalar("SELECT armour FROM users WHERE identifier = @identifier", { 
+        ['@identifier'] = xPlayer.getIdentifier()
         }, function(data)
         if (data ~= nil) then
             TriggerClientEvent('LRP-Armour:Client:SetPlayerArmour', playerId, data)
@@ -23,9 +23,9 @@ end)
 AddEventHandler('esx:playerDropped', function(playerId)
     if currentArmour ~= nil then
         local xPlayer = ESX.GetPlayerFromId(playerId)
-        exports.ghmattimysql:execute("UPDATE users SET armour = @armour WHERE identifier = @identifier", { 
-            ['identifier'] = tostring(xPlayer.getIdentifier()),
-            ['armour'] = tonumber(currentArmour)
+        MySQL.Async.execute("UPDATE users SET armour = @armour WHERE identifier = @identifier", { 
+            ['@identifier'] = xPlayer.getIdentifier(),
+            ['@armour'] = tonumber(currentArmour)
         })
     end
 end)
