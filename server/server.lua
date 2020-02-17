@@ -2,13 +2,6 @@ ESX = nil
 
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
-local currentArmour = nil
-
-RegisterNetEvent('LRP-Armour:Server:RefreshCurrentArmour')
-AddEventHandler('LRP-Armour:Server:RefreshCurrentArmour', function(updateArmour)
-   currentArmour = updateArmour
-end)
-
 AddEventHandler('esx:playerLoaded', function(playerId)
     local xPlayer = ESX.GetPlayerFromId(playerId)
     MySQL.Async.fetchScalar("SELECT armour FROM users WHERE identifier = @identifier", { 
@@ -20,12 +13,13 @@ AddEventHandler('esx:playerLoaded', function(playerId)
     end)
 end)
 
-AddEventHandler('esx:playerDropped', function(playerId)
-    if currentArmour ~= nil then
-        local xPlayer = ESX.GetPlayerFromId(playerId)
-        MySQL.Async.execute("UPDATE users SET armour = @armour WHERE identifier = @identifier", { 
-            ['@identifier'] = xPlayer.getIdentifier(),
-            ['@armour'] = tonumber(currentArmour)
-        })
-    end
+RegisterServerEvent('LRP-Armour:Server:RefreshCurrentArmour')
+AddEventHandler('LRP-Armour:Server:RefreshCurrentArmour', function(updateArmour)
+    local src = source
+    local xPlayer = ESX.GetPlayerFromId(src)
+    MySQL.Async.execute("UPDATE users SET armour = @armour WHERE identifier = @identifier", { 
+        ['@identifier'] = xPlayer.getIdentifier(),
+        ['@armour'] = tonumber(updateArmour)
+    })
 end)
+
